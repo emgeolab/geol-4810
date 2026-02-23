@@ -1,0 +1,217 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath, amssymb}
+\usepackage{physics}
+\usepackage{geometry}
+\usepackage{bm}
+\usepackage{enumitem}
+\geometry{margin=1in}
+
+\title{First Vertical Derivative (FVD) of Magnetic Data \\ 
+with Non-Zero Observation Height}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Potential-Field Framework}
+
+In a source-free region above magnetic sources, the magnetic field can be represented by a scalar potential $\Phi$:
+
+\[
+\mathbf{B} = -\nabla \Phi
+\]
+
+and satisfies Laplace's equation:
+
+\[
+\nabla^2 \Phi = 0.
+\]
+
+Expanding the Laplacian:
+
+\[
+\frac{\partial^2 \Phi}{\partial x^2}
++
+\frac{\partial^2 \Phi}{\partial y^2}
++
+\frac{\partial^2 \Phi}{\partial z^2}
+=
+0.
+\]
+
+\section{Fourier Transform in Horizontal Coordinates}
+
+Taking the 2D Fourier transform in $x$ and $y$:
+
+\[
+\hat{\Phi}(k_x, k_y, z)
+=
+\mathcal{F}_{x,y}\{\Phi(x,y,z)\},
+\]
+
+the horizontal derivatives become:
+
+\[
+\frac{\partial^2}{\partial x^2} \rightarrow -k_x^2,
+\qquad
+\frac{\partial^2}{\partial y^2} \rightarrow -k_y^2.
+\]
+
+Thus Laplace's equation becomes
+
+\[
+\frac{\partial^2 \hat{\Phi}}{\partial z^2}
+-
+(k_x^2 + k_y^2)\hat{\Phi}
+=
+0.
+\]
+
+Define the radial wavenumber
+
+\[
+K = \sqrt{k_x^2 + k_y^2}.
+\]
+
+The governing equation reduces to
+
+\[
+\frac{\partial^2 \hat{\Phi}}{\partial z^2}
+-
+K^2 \hat{\Phi}
+=
+0.
+\]
+
+\section{Solution in the Vertical Direction}
+
+The general solution is
+
+\[
+\hat{\Phi}(k_x,k_y,z)
+=
+A(k_x,k_y)e^{Kz}
++
+B(k_x,k_y)e^{-Kz}.
+\]
+
+Requiring bounded behavior away from the sources eliminates the growing exponential term, yielding
+
+\[
+\hat{\Phi}(k_x,k_y,z)
+=
+B(k_x,k_y)e^{-Kz}.
+\]
+
+This exponential decay with height underpins upward continuation and derivative operators.
+
+\section{Vertical Derivative Operator}
+
+Let $B(x,y,z)$ be a magnetic component measured at elevation $z$.
+In Fourier space,
+
+\[
+\hat{B}(k_x,k_y,z)
+=
+\hat{B}(k_x,k_y,0)\,e^{-Kz}.
+\]
+
+Taking the vertical derivative,
+
+\[
+\frac{\partial \hat{B}}{\partial z}
+=
+- K \hat{B}(k_x,k_y,0)e^{-Kz}.
+\]
+
+Evaluated at the observation plane $z = z_{\text{obs}}$:
+
+\[
+\boxed{
+\mathcal{F}
+\left\{
+\left.
+\frac{\partial B}{\partial z}
+\right|_{z=z_{\text{obs}}}
+\right\}
+=
+- K \hat{B}(k_x,k_y,z_{\text{obs}})
+}
+\]
+
+Thus, at any constant elevation plane,
+
+\[
+\boxed{
+\frac{\partial B}{\partial z}
+=
+\mathcal{F}^{-1}
+\left\{
+- K \hat{B}
+\right\}.
+}
+\]
+
+In practice, the sign depends on the $z$-axis convention and is often absorbed into implementation.
+
+\section{Upward Continuation}
+
+Upward continuation by $\Delta z > 0$ is given by
+
+\[
+\hat{B}(z+\Delta z)
+=
+\hat{B}(z)e^{-K\Delta z}.
+\]
+
+\section{Stabilized First Vertical Derivative}
+
+Because the operator multiplies by $K$, high-frequency noise is amplified.
+A stabilized form is obtained by first upward continuing:
+
+\[
+\boxed{
+\widehat{\text{FVD}}(z+\Delta z)
+=
+- K e^{-K\Delta z} \hat{B}(z).
+}
+\]
+
+This corresponds physically to computing the vertical derivative at a higher datum.
+
+\section{Handling Variable Observation Height}
+
+If data are collected on a variable topographic or draped surface:
+
+\begin{enumerate}[leftmargin=1.5em]
+\item Continue data to a constant elevation plane (preferably upward for stability).
+\item Apply the FVD operator in Fourier space.
+\end{enumerate}
+
+An alternative is to compute an equivalent source representation and evaluate the field on a chosen datum prior to differentiation.
+
+\section{One-Dimensional Case}
+
+For a profile $B(x)$,
+
+\[
+K = |k|,
+\]
+
+and
+
+\[
+\boxed{
+\mathcal{F}
+\left\{
+\frac{\partial B}{\partial z}
+\right\}
+=
+- |k| \hat{B}(k).
+}
+\]
+
+\end{document}
